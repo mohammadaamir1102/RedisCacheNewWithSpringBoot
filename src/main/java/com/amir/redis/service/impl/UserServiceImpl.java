@@ -2,10 +2,15 @@ package com.amir.redis.service.impl;
 
 import com.amir.redis.entity.User;
 import com.amir.redis.repo.UserRepository;
+import com.amir.redis.res.UserResponse;
+import com.amir.redis.util.CommonUtil;
 import com.amir.redis.util.RedisService;
 import com.amir.redis.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,18 +24,40 @@ public class UserServiceImpl implements UserService {
     private RedisService redisService;
 
     @Override
-    public User saveUser(User user) {
+    public UserResponse saveUser(User user) throws JsonProcessingException {
+        user.setAge(CommonUtil.calculateAge(user.getDob().toString()));
         User savedUser = userRepository.save(user);
         redisService.setValueByKey(KEY + savedUser.getId().toString(), savedUser, 300l);
-        return savedUser;
+        return UserResponse.builder()
+                .id(savedUser.getId())
+                .fullName(savedUser.getFullName())
+                .email(savedUser.getEmail())
+                .dob(savedUser.getDob())
+                .age(savedUser.getAge()).build();
     }
 
+
     @Override
-    public User getUserById(Long id) {
-        User cacheUserResponse = redisService.getValueByKey(KEY + id.toString(), User.class);
-        if (cacheUserResponse != null) {
-            return cacheUserResponse;
+    public UserResponse getUserById(Long id) {
+        User savedUser = redisService.getValueByKey(KEY + id.toString(), User.class);
+        if (savedUser != null) {
+            return UserResponse.builder()
+                    .id(savedUser.getId())
+                    .fullName(savedUser.getFullName())
+                    .email(savedUser.getEmail())
+                    .dob(savedUser.getDob())
+                    .age(savedUser.getAge()).build();
         }
-        return userRepository.findById(id).orElse(null);
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return UserResponse.builder()
+                    .id(user.getId())
+                    .fullName(user.getFullName())
+                    .email(user.getEmail())
+                    .dob(user.getDob())
+                    .age(user.getAge()).build();
+        }
+        return null;
     }
 }

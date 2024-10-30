@@ -1,6 +1,7 @@
 package com.amir.redis.controller;
 
 import com.amir.redis.entity.User;
+import com.amir.redis.res.UserResponse;
 import com.amir.redis.service.UserService;
 import com.amir.redis.util.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ public class UserController {
     private RedisService redisService;
 
     @PostMapping("/save")
-    public ResponseEntity<User> saveUser(@RequestBody User user) {
-        User savedUser;
+    public ResponseEntity<UserResponse> saveUser(@RequestBody User user) {
+        UserResponse savedUser;
         try {
             savedUser = userService.saveUser(user);
         } catch (Exception e) {
@@ -32,8 +33,8 @@ public class UserController {
     }
 
     @GetMapping("/getUser/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user;
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+        UserResponse user;
         try {
             user = userService.getUserById(id);
         } catch (Exception e) {

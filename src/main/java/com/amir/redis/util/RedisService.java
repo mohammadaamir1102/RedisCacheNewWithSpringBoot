@@ -14,14 +14,16 @@ public class RedisService {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+    private static final String KEY = "USER_";
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     public <T> T getValueByKey(String key, Class<T> type) {
         Object value = redisTemplate.opsForValue().get(key);
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            assert value != null;
-            return objectMapper.readValue(value.toString(), type);
+            return value != null ? objectMapper.readValue(value.toString(), type) : null;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return null;
@@ -29,21 +31,19 @@ public class RedisService {
     }
 
     // ttl = time to live -> how many time data will be in cached it's optional
-    public void setValueByKey(String key, Object object, Long ttl) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
+    public void setValueByKey(String key, Object object, Long ttl) throws JsonProcessingException {
             String value = objectMapper.writeValueAsString(object);
             redisTemplate.opsForValue().set(key, value, ttl, TimeUnit.SECONDS);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 
     public boolean deleteFromRedisCache(String key){
-        return Boolean.TRUE.equals(redisTemplate.delete(key));
+        return Boolean.TRUE.equals(redisTemplate.delete(KEY + key));
     }
 
     public long deleteMultipleFromRedisCache(List<String> keys){
-        return redisTemplate.delete(keys);
+        List<String> listOfKeys = keys.stream().map(item -> KEY + item).toList();
+        Long delete = redisTemplate.delete(listOfKeys);
+        return delete == null ? 0 : delete;
     }
 }

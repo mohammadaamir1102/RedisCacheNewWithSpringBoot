@@ -1,9 +1,11 @@
 package com.amir.redis.service;
 
 import com.amir.redis.entity.User;
+import com.amir.redis.res.UserResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface UserService {
-    User saveUser(User user);
+    UserResponse saveUser(User user) throws JsonProcessingException;
 
-    User getUserById(Long id);
+    UserResponse getUserById(Long id);
 }
