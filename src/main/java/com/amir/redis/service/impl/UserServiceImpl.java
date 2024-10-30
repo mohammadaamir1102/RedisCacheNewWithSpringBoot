@@ -13,7 +13,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private static final String KEY = "USER";
+    private static final String KEY = "USER_";
 
     @Autowired
     private RedisService redisService;
