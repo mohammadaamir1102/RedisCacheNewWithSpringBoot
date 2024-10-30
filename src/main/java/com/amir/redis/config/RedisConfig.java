@@ -13,9 +13,10 @@ import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-@EnableCaching
+//@EnableCaching
 public class RedisConfig {
 
+   /*
     //connection for redis
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
@@ -35,10 +36,10 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-    /*
+    *//*
     * Disabling this setting formats dates as ISO-8601 strings instead of timestamps,
     * making them compatible with most APIs and readable in Swagger UI.
-    */
+    *//*
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -46,4 +47,6 @@ public class RedisConfig {
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return objectMapper;
     }
+    */
+
 }
