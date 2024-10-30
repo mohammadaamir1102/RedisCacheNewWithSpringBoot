@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -36,5 +37,13 @@ public class RedisService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean deleteFromRedisCache(String key){
+        return Boolean.TRUE.equals(redisTemplate.delete(key));
+    }
+
+    public long deleteMultipleFromRedisCache(List<String> keys){
+        return redisTemplate.delete(keys);
     }
 }
